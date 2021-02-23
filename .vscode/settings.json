@@ -1,0 +1,5 @@
+{
+    "python.pythonPath": "/home/venus713/.local/share/virtualenvs/data-pipeline-P6B5IECJ/bin/python",
+    "python.linting.flake8Enabled": true,
+    "editor.rulers": [80]
+}

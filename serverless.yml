@@ -1,0 +1,49 @@
+service: data-pipeline
+frameworkVersion: '2'
+
+custom:
+  projectName: 4byteSoftware
+  documentsTableName: ${self:custom.projectName}-dataPipeline
+  tableThroughput: 10
+  pythonRequirements:
+    dockerizePip: non-linux
+    layer: true
+
+provider:
+  name: aws
+  runtime: python3.8
+  lambdaHashingVersion: 20201221
+  stage: dev
+  region: us-east-1
+  environment:
+    DB_TABLE_NAME: ${self:custom.documentsTableName}
+    REGION: ${self:provider.region}
+
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - dynamodb:DescribeTable
+        - dynamodb:Query
+        - dynamodb:Scan
+        - dynamodb:GetItem
+        - dynamodb:PutItem
+        - dynamodb:UpdateItem
+        - dynamodb:DeleteItem
+      Resource:
+        - "Fn::GetAtt": [ DataPipelineTable, Arn ]
+
+plugins:
+  - serverless-python-requirements
+  - serverless-offline
+functions:
+  import_csv_to_db:
+    handler: src.handler.import_csv_to_db
+    events:
+      - http:
+          method: post
+          path: upload
+          cors: true
+
+resources:
+  - ${file(resources/api-gateway-errors.yml)}
+  - ${file(resources/dynamodb-table.yml)}

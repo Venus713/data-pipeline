@@ -1,0 +1,24 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Python: Django",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/app.py",
+            "args": [
+                "runserver"
+            ],
+            "env": {
+                "AWS_PROFILE": "default",
+                "DB_TABLE_NAME": "4byteSoftware-dataPipeline",
+                "S3_BUCKET_NAME": "4byteSoftware-dataPipeline",
+                "REGION": "us-east-1"
+            },
+            "django": true
+        }
+    ]
+}
