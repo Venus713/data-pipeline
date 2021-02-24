@@ -2,8 +2,9 @@ service: data-pipeline
 frameworkVersion: '2'
 
 custom:
-  projectName: 4byteSoftware
-  documentsTableName: ${self:custom.projectName}-dataPipeline
+  projectName: 4byte-software
+  documentsTableName: ${self:custom.projectName}-data
+  s3bucketName: data-${self:custom.projectName}
   tableThroughput: 10
   pythonRequirements:
     dockerizePip: non-linux
@@ -31,6 +32,14 @@ provider:
         - dynamodb:DeleteItem
       Resource:
         - "Fn::GetAtt": [ DataPipelineTable, Arn ]
+    - Effect: 'Allow'
+      Action:
+        - 's3:PutObject'
+        - 's3:GetObject'
+        - 's3:ListBucket'
+      Resource: 
+        - "arn:aws:s3:::${self:custom.s3bucketName}/*"
+        - "arn:aws:s3:::${self:custom.s3bucketName}"
 
 plugins:
   - serverless-python-requirements
@@ -39,11 +48,12 @@ functions:
   import_csv_to_db:
     handler: src.handler.import_csv_to_db
     events:
-      - http:
-          method: post
-          path: upload
-          cors: true
+      - s3:
+          bucket: ${self:custom.s3bucketName}
+          event: s3:ObjectCreated:Put
+          rules:
+            - suffix: .csv
 
 resources:
-  - ${file(resources/api-gateway-errors.yml)}
   - ${file(resources/dynamodb-table.yml)}
+  - ${file(resources/s3-bucket.yml)}
