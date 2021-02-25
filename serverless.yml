@@ -54,7 +54,8 @@ functions:
           event: s3:ObjectCreated:Put
           rules:
             - suffix: .csv
+          existing: true
 
 resources:
   - ${file(resources/dynamodb-table.yml)}
-  # - ${file(resources/s3-bucket.yml)}
+  - ${file(resources/s3-bucket.yml)}
