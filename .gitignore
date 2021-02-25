@@ -4,3 +4,5 @@ __pycache__
 .serverless
 env.json
 package-lock.json
+Pipfile
+Pipfile.lock
